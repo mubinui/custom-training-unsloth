@@ -1,0 +1,44 @@
+# UV Package Manager - Requirements for Bengali Training
+# Use this file if you're using UV package manager instead of pip
+
+# Note: Install PyTorch first separately with UV:
+# uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# Core PyTorch ecosystem (install first)
+torch>=2.4.0
+torchvision>=0.19.0
+torchaudio>=2.4.0
+
+# Unsloth - UV handles Git dependencies differently
+# Install manually: uv pip install git+https://github.com/unslothai/unsloth.git
+git+https://github.com/unslothai/unsloth.git
+
+# Transformers ecosystem
+transformers>=4.44.0
+datasets>=2.20.0
+accelerate>=0.33.0
+bitsandbytes>=0.45.5
+peft>=0.12.0
+trl>=0.10.0
+
+# Windows compatibility
+triton>=2.3.0; sys_platform == "win32"
+xformers>=0.0.27
+
+# Environment configuration (required)
+python-dotenv>=1.0.0
+
+# Data processing
+pandas>=2.2.0
+numpy>=1.26.0
+
+# Utilities
+tqdm>=4.66.0
+colorama>=0.4.6
+rich>=13.7.0
+
+# Additional dependencies
+safetensors>=0.4.0
+protobuf>=4.25.0
+packaging>=24.0
+typing-extensions>=4.12.0
