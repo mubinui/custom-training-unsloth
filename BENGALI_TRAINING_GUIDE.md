@@ -27,9 +27,17 @@ python main_bengali.py --eval --push
 
 ### Dataset Information
 - **Source**: `spedrox-sac/bengali_chat_conv` from Hugging Face
-- **Type**: Conversational data in Bengali
+- **Access**: 🔓 **PUBLIC DATASET - NO TOKEN REQUIRED**
+- **Type**: Conversational data in Bengali  
 - **Format**: Chat conversations converted to Alpaca format
-- **Size**: Variable (can be limited with `--max-examples`)
+- **Size**: 1,074 conversation pairs (can be limited with `--max-examples`)
+
+### 🚀 Easy Access
+The Bengali dataset is completely public and requires no authentication:
+- ✅ No Hugging Face account needed
+- ✅ No API tokens required  
+- ✅ Direct download available
+- ✅ Ready to use immediately
 
 ### Data Processing Features
 - Automatic conversion from chat conversations to Alpaca format

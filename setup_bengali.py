@@ -42,6 +42,12 @@ def setup_bengali_environment():
     """Setup Bengali training environment"""
     logger.info("Setting up Bengali training environment...")
     
+    # Important note about dataset access
+    logger.info("📋 DATASET ACCESS INFO:")
+    logger.info("✅ spedrox-sac/bengali_chat_conv is a PUBLIC dataset")
+    logger.info("✅ NO Hugging Face token required")
+    logger.info("✅ Direct download available")
+    
     # Copy Bengali environment template if .env doesn't exist
     if not os.path.exists('.env'):
         if os.path.exists('.env.bengali'):
