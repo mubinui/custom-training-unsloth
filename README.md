@@ -1,6 +1,6 @@
 # Unsloth Custom Training System
 
-A comprehensive system for fine-tuning language models using Unsloth, with environment-based configuration for easy deployment and management.
+A comprehensive system for fine-tuning language models using Unsloth, with environment-based configuration for easy deployment and management. **Now includes specialized Bengali language model training!**
 
 ## 🚀 Key Features
 
@@ -12,6 +12,7 @@ A comprehensive system for fine-tuning language models using Unsloth, with envir
 - **Evaluation Tools**: Built-in model evaluation capabilities
 - **Comprehensive Logging**: Detailed logging for monitoring training progress
 - **Windows Optimized**: Designed for Windows deployment with NVIDIA GPUs
+- **🇧🇩 Bengali Training**: Specialized branch for Bengali language models using HuggingFace datasets
 
 ## ⚡ Quick Start
 
@@ -33,6 +34,38 @@ LEARNING_RATE=2e-4
 ```bash
 train_env.bat                 # Use your configured data
 train_env.bat --sample        # Test with sample data
+```
+
+## 🇧🇩 Bengali Training (NEW!)
+
+This project now includes specialized Bengali language model training using the `spedrox-sac/bengali_chat_conv` dataset.
+
+### Quick Start for Bengali Training
+
+```bash
+# Switch to Bengali training branch
+git checkout bengali-training
+
+# Setup Bengali environment
+python setup_bengali.py
+
+# Test with sample Bengali data
+python main_bengali.py --sample --eval
+
+# Train with full Bengali dataset
+python main_bengali.py --eval --push
+```
+
+### Bengali Training Features
+- **Specialized Data Processing**: Automatic conversion from Bengali chat conversations to Alpaca format
+- **Bengali Chat Template**: Custom Bengali system prompts and conversation formatting
+- **Enhanced LoRA Configuration**: Optimized for Bengali language modeling (rank 32, alpha 32)
+- **Bengali Evaluation Prompts**: Built-in Bengali test prompts for model evaluation
+- **HuggingFace Integration**: Direct loading from `spedrox-sac/bengali_chat_conv` dataset
+
+📖 **Full Bengali Training Guide**: See [BENGALI_TRAINING_GUIDE.md](BENGALI_TRAINING_GUIDE.md) for comprehensive documentation.
+
+## 📦 Installation Options
 ```
 
 ## 🔧 Requirements
@@ -99,6 +132,8 @@ This project includes comprehensive documentation:
 - **DATA_REQUIREMENTS_GUIDE.md**: Detailed guide on data requirements and fine-tuning strategies
 - **SETUP_GUIDE.md**: System requirements, installation, and troubleshooting
 - **QUICK_REFERENCE.md**: Quick command reference for daily use
+- **ENV_CONFIG_GUIDE.md**: Complete environment configuration reference
+- **🇧🇩 BENGALI_TRAINING_GUIDE.md**: Specialized Bengali training documentation
 
 ## How to Use
 
