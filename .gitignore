@@ -1,0 +1,45 @@
+# Add these folders to .gitignore
+outputs/
+logs/
+data/processed_dataset/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.log
+.env
+.venv
+env/
+ENV/
+
+# Model files
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# Dataset cache
+.cache/
+dataset_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# HuggingFace cache
+~/.cache/huggingface/
+
+# Wandb
+wandb/

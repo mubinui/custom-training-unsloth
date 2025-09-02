@@ -1,0 +1,45 @@
+# Exact versions for maximum compatibility (tested configuration)
+# Use this file if you encounter dependency conflicts with requirements.txt
+
+# Core ML libraries (install these first)
+torch==2.4.1
+torchvision==0.19.1
+torchaudio==2.4.1
+
+# Unsloth and ML dependencies
+unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
+transformers==4.44.2
+datasets==2.21.0
+accelerate==0.33.0
+bitsandbytes==0.43.3
+peft==0.12.0
+trl==0.10.1
+
+# Data processing
+pandas==2.2.2
+numpy==1.26.4
+
+# Environment configuration
+python-dotenv==1.0.1
+scikit-learn==1.5.1
+
+# Visualization and monitoring
+matplotlib==3.9.2
+seaborn==0.13.2
+wandb==0.17.8
+tensorboard==2.17.0
+
+# Utilities
+tqdm==4.66.5
+colorama==0.4.6
+rich==13.7.1
+
+# Additional dependencies
+safetensors==0.4.4
+protobuf==4.25.4
+packaging==24.1
+typing-extensions==4.12.2
+
+# Optional but recommended for better performance
+ninja==1.11.1.1
+flash-attn==2.6.3
