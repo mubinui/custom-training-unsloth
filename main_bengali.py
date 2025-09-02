@@ -9,6 +9,8 @@ import argparse
 import os
 import sys
 import logging
+import shutil
+import json
 from pathlib import Path
 
 # Setup logging
@@ -28,7 +30,7 @@ try:
 except ImportError as e:
     logging.error(f"Import error: {e}")
     logging.error("Please ensure all dependencies are installed:")
-    logging.error("pip install -r requirements.txt")
+    logging.error("Run: setup.bat")
     sys.exit(1)
 
 logger = logging.getLogger(__name__)

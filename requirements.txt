@@ -1,52 +1,32 @@
-# Unsloth and core dependencies - UV/Windows compatible
-# For UV users: Use requirements-uv.txt or install Git dependencies separately
-# UV users: uv pip install git+https://github.com/unslothai/unsloth.git
-unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
+# Windows RTX 5080 Requirements
+# Install PyTorch first with: pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
 
-# Core PyTorch ecosystem (install first for UV users)
-# RTX 5080 COMPATIBLE: CUDA 12.4+ required for sm_120 capability
-# UV users: uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-# For RTX 5080: uv pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
-torch>=2.5.0
-torchvision>=0.20.0
-torchaudio>=2.5.0
-
-# Transformers ecosystem (compatible with Unsloth requirements)
+# Core ML libraries
 transformers>=4.44.0
 datasets>=2.20.0
 accelerate>=0.33.0
-bitsandbytes>=0.45.5
 peft>=0.12.0
-trl>=0.10.0
-
-# Additional dependencies for Windows compatibility
-triton>=2.3.0
-xformers>=0.0.27
+trl>=0.9.0
+bitsandbytes>=0.45.5
 
 # Data processing
 pandas>=2.2.0
-numpy>=1.26.0
-scikit-learn>=1.5.0
+numpy>=1.24.0
 
-# Environment configuration (required for our system)
+# Environment and utilities
 python-dotenv>=1.0.0
-
-# Utilities
 tqdm>=4.66.0
 colorama>=0.4.6
 rich>=13.7.0
 
-# Additional dependencies for compatibility
+# Additional dependencies
 safetensors>=0.4.0
 protobuf>=4.25.0
 packaging>=24.0
 typing-extensions>=4.12.0
 
-# Optional visualization (install if needed)
-# matplotlib>=3.9.0
-# seaborn>=0.13.0
-# wandb>=0.17.0
-# tensorboard>=2.17.0
+# Unsloth (install separately after other packages)
+# pip install git+https://github.com/unslothai/unsloth.git
 
-# Performance enhancements (optional)
-# ninja>=1.11.0
+# Note: triton and flash-attn are not compatible with Windows
+# Note: xformers is optional and may cause conflicts
