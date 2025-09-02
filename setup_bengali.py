@@ -22,7 +22,6 @@ def check_dependencies():
         'torch',
         'transformers',
         'datasets',
-        'unsloth',
         'python-dotenv'
     ]
     
@@ -35,6 +34,23 @@ def check_dependencies():
         except ImportError:
             missing_packages.append(package)
             logger.error(f"✗ {package} is missing")
+    
+    # Special handling for unsloth - check separately due to GPU requirements
+    try:
+        import torch
+        if torch.cuda.is_available():
+            logger.info("✓ CUDA detected, checking unsloth...")
+            import unsloth
+            logger.info(f"✓ unsloth is installed and working")
+        else:
+            logger.warning("⚠️  CUDA not available - unsloth may not work properly")
+            logger.warning("⚠️  Please ensure you have an NVIDIA GPU and proper drivers")
+            # Still try to import unsloth to check if it's installed
+            import unsloth
+            logger.info(f"✓ unsloth is installed (but GPU support unclear)")
+    except Exception as e:
+        logger.error(f"✗ unsloth import failed: {e}")
+        missing_packages.append('unsloth')
     
     return missing_packages
 

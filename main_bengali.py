@@ -14,9 +14,16 @@ from pathlib import Path
 # Add the current directory to Python path
 sys.path.append(str(Path(__file__).parent))
 
-from env_config import load_config, check_gpu_compatibility, get_model_info
-from bengali_data_processor import BengaliDataProcessor
-from trainer import UnslothTrainer
+# Import with error handling
+try:
+    from env_config import load_config, check_gpu_compatibility, get_model_info
+    from bengali_data_processor import BengaliDataProcessor
+    from trainer import UnslothTrainer
+except ImportError as e:
+    logging.error(f"Import error: {e}")
+    logging.error("Please ensure all dependencies are installed:")
+    logging.error("pip install -r requirements.txt")
+    sys.exit(1)
 
 logger = logging.getLogger(__name__)
 
@@ -190,8 +197,6 @@ def main():
         config.run_evaluation = True
     if args.push:
         config.push_to_hub = True
-    if args.max_examples:
-        config.max_examples = args.max_examples
     
     # Check system compatibility
     system_info = check_gpu_compatibility()
@@ -267,8 +272,7 @@ def main():
             
             responses = trainer.evaluate_model(
                 bengali_prompts, 
-                max_new_tokens=config.eval_max_new_tokens,
-                temperature=config.eval_temperature
+                max_new_tokens=config.eval_max_new_tokens
             )
             
             for i, (prompt, response) in enumerate(zip(bengali_prompts, responses)):
