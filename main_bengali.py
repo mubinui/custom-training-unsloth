@@ -5,9 +5,38 @@ Specialized training script for Bengali language models using the bengali_chat_c
 Usage: python main_bengali.py [--sample] [--eval] [--push] [--max-examples N]
 """
 
-import argparse
-import os
+# Windows Triton Compatibility Patch (must be first)
 import sys
+import os
+platform = sys.platform
+
+if platform.startswith('win'):
+    # Patch triton import for Windows
+    import types
+    if 'triton' not in sys.modules:
+        # Create mock triton module
+        triton = types.ModuleType('triton')
+        triton.__version__ = "2.0.0"
+        
+        # Create mock submodules
+        language = types.ModuleType('language')
+        compiler = types.ModuleType('compiler')
+        
+        # Add mock functions
+        setattr(language, 'device', lambda: 'cuda')
+        setattr(compiler, 'make_launcher', lambda *args, **kwargs: None)
+        
+        setattr(triton, 'language', language)
+        setattr(triton, 'compiler', compiler)
+        
+        # Register in sys.modules
+        sys.modules['triton'] = triton
+        sys.modules['triton.language'] = language
+        sys.modules['triton.compiler'] = compiler
+        
+        print("Applied Windows triton compatibility patch for Unsloth")
+
+import argparse
 import logging
 import shutil
 import json
