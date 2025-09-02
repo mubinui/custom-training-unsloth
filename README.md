@@ -18,12 +18,17 @@ git clone https://github.com/mubinui/custom-training-unsloth.git
 cd custom-training-unsloth
 ```
 
-2. **Run setup (handles everything):**
+2. **Run setup (automatically cleans UV environments):**
 ```cmd
 setup.bat
 ```
 
-3. **Activate environment for future use:**
+3. **If you had UV issues, use clean setup:**
+```cmd
+clean_setup.bat
+```
+
+4. **Activate environment for future use:**
 ```cmd
 venv\Scripts\activate.bat
 ```

@@ -3,6 +3,16 @@ echo ================================================
 echo Bengali Training Setup for Windows RTX 5080
 echo ================================================
 
+echo Cleaning any existing environments...
+if exist venv rmdir /s /q venv
+if exist .venv rmdir /s /q .venv
+if exist .venv-uv rmdir /s /q .venv-uv
+
+echo Clearing UV environment variables...
+set UV_SYSTEM_PYTHON=
+set UV_CACHE_DIR=
+set VIRTUAL_ENV=
+
 echo Creating virtual environment...
 python -m venv venv
 if %errorlevel% neq 0 (
