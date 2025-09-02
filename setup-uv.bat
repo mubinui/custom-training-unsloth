@@ -38,13 +38,19 @@ echo Step 2: Activating virtual environment...
 call .venv-uv\Scripts\activate
 
 echo.
-echo Step 3: Installing PyTorch with CUDA support using UV...
-uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+echo Step 3: Installing PyTorch with RTX 5080 support (CUDA 12.4)...
+REM RTX 5080 requires CUDA 12.4+ for sm_120 capability
+echo Installing PyTorch with CUDA 12.4 for RTX 5080 compatibility...
+uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 
 if %ERRORLEVEL% neq 0 (
-    echo ERROR: Failed to install PyTorch with UV
-    echo Trying alternative method...
-    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+    echo WARNING: CUDA 12.4 failed, trying nightly build for RTX 5080...
+    uv pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
+    
+    if %ERRORLEVEL% neq 0 (
+        echo WARNING: PyTorch installation failed, you may need to install manually
+        echo For RTX 5080, use: uv pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
+    )
 )
 
 echo.

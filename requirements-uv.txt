@@ -1,13 +1,16 @@
 # UV Package Manager - Requirements for Bengali Training
 # Use this file if you're using UV package manager instead of pip
 
-# Note: Install PyTorch first separately with UV:
-# uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+# Note: Install PyTorch first separately with UV for RTX 5080:
+# RTX 5080 COMPATIBLE (CUDA 12.4+ for sm_120 capability):
+# uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+# OR for nightly (recommended for RTX 5080):
+# uv pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
 
 # Core PyTorch ecosystem (install first)
-torch>=2.4.0
-torchvision>=0.19.0
-torchaudio>=2.4.0
+torch>=2.5.0
+torchvision>=0.20.0
+torchaudio>=2.5.0
 
 # Unsloth - UV handles Git dependencies differently
 # Install manually: uv pip install git+https://github.com/unslothai/unsloth.git

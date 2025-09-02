@@ -4,10 +4,12 @@
 unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
 
 # Core PyTorch ecosystem (install first for UV users)
-# UV users: uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-torch>=2.4.0
-torchvision>=0.19.0
-torchaudio>=2.4.0
+# RTX 5080 COMPATIBLE: CUDA 12.4+ required for sm_120 capability
+# UV users: uv pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+# For RTX 5080: uv pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
+torch>=2.5.0
+torchvision>=0.20.0
+torchaudio>=2.5.0
 
 # Transformers ecosystem (compatible with Unsloth requirements)
 transformers>=4.44.0
