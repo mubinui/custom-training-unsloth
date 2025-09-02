@@ -52,7 +52,8 @@ if %errorlevel% neq 0 (
 echo Testing installation...
 python -c "import torch; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available()); print('CUDA version:', torch.version.cuda if torch.cuda.is_available() else 'None')"
 
-python -c "try:\n    import unsloth\n    print('Unsloth imported successfully')\nexcept ImportError as e:\n    print('Unsloth import failed:', e)"
+echo Testing Unsloth...
+python -c "import unsloth; print('Unsloth imported successfully')"
 
 echo.
 echo Setup complete! 
