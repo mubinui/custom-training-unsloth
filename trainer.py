@@ -2,10 +2,19 @@ import os
 import torch
 import logging
 from datetime import datetime
+
+# Import unsloth first for optimizations (Windows compatibility)
+try:
+    from unsloth import FastLanguageModel
+    from unsloth.chat_templates import get_chat_template
+    UNSLOTH_AVAILABLE = True
+except ImportError as e:
+    print(f"WARNING: Unsloth import failed: {e}")
+    print("Falling back to standard transformers...")
+    UNSLOTH_AVAILABLE = False
+
 from transformers import TrainingArguments, Trainer
 from trl import SFTTrainer
-from unsloth import FastLanguageModel
-from unsloth.chat_templates import get_chat_template
 from config import TrainingConfig, check_gpu_compatibility
 from data_processor import DataProcessor
 
@@ -49,38 +58,53 @@ class UnslothTrainer:
             logger.warning("CUDA not available. Training will be very slow on CPU.")
     
     def load_model(self):
-        """Load the model and tokenizer using Unsloth"""
+        """Load the model and tokenizer using Unsloth or fallback to transformers"""
         logger.info(f"Loading model: {self.config.model_name}")
         
-        try:
-            self.model, self.tokenizer = FastLanguageModel.from_pretrained(
-                model_name=self.config.model_name,
-                max_seq_length=self.config.max_seq_length,
-                dtype=self.config.dtype,
-                load_in_4bit=self.config.load_in_4bit,
+        if UNSLOTH_AVAILABLE:
+            try:
+                self.model, self.tokenizer = FastLanguageModel.from_pretrained(
+                    model_name=self.config.model_name,
+                    max_seq_length=self.config.max_seq_length,
+                    dtype=self.config.dtype,
+                    load_in_4bit=self.config.load_in_4bit,
+                )
+                
+                logger.info("Model loaded successfully with Unsloth")
+                
+                # Add LoRA adapters
+                self.model = FastLanguageModel.get_peft_model(
+                    self.model,
+                    r=self.config.r,
+                    target_modules=self.config.target_modules,
+                    lora_alpha=self.config.lora_alpha,
+                    lora_dropout=self.config.lora_dropout,
+                    bias=self.config.bias,
+                    use_gradient_checkpointing=self.config.use_gradient_checkpointing,
+                    random_state=self.config.seed,
+                    use_rslora=False,
+                    loftq_config=None,
+                )
+                
+                # Enable native 2x faster inference
+                FastLanguageModel.for_inference(self.model)
+                
+            except Exception as e:
+                logger.error(f"Failed to load model with Unsloth: {e}")
+                raise
+        else:
+            logger.warning("Unsloth not available, using standard transformers (slower)")
+            from transformers import AutoModelForCausalLM, AutoTokenizer
+            
+            self.tokenizer = AutoTokenizer.from_pretrained(self.config.model_name)
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.config.model_name,
+                torch_dtype=torch.float16 if self.config.dtype == "float16" else torch.float32,
+                device_map="auto"
             )
             
-            logger.info("Model loaded successfully")
-            
-            # Add LoRA adapters
-            self.model = FastLanguageModel.get_peft_model(
-                self.model,
-                r=self.config.r,
-                target_modules=self.config.target_modules,
-                lora_alpha=self.config.lora_alpha,
-                lora_dropout=self.config.lora_dropout,
-                bias=self.config.bias,
-                use_gradient_checkpointing=self.config.use_gradient_checkpointing,
-                random_state=self.config.random_state,
-                use_rslora=self.config.use_rslora,
-                loftq_config=self.config.loftq_config,
-            )
-            
-            logger.info("LoRA adapters added successfully")
-            
-        except Exception as e:
-            logger.error(f"Error loading model: {str(e)}")
-            raise
+            if self.tokenizer.pad_token is None:
+                self.tokenizer.pad_token = self.tokenizer.eos_token
     
     def setup_chat_template(self):
         """Setup chat template for the tokenizer"""
@@ -174,21 +198,27 @@ class UnslothTrainer:
         
         logger.info(f"Saving model using method: {self.config.save_method}")
         
-        if self.config.save_method == "lora":
-            # Save only LoRA adapters
+        if UNSLOTH_AVAILABLE and hasattr(self.model, 'save_pretrained_merged'):
+            if self.config.save_method == "lora":
+                # Save only LoRA adapters
+                self.model.save_pretrained(save_path)
+                self.tokenizer.save_pretrained(save_path)
+                logger.info(f"LoRA adapters saved to {save_path}")
+                
+            elif self.config.save_method == "merged_16bit":
+                # Save merged model in 16-bit
+                self.model.save_pretrained_merged(save_path, self.tokenizer, save_method="merged_16bit")
+                logger.info(f"Merged 16-bit model saved to {save_path}")
+                
+            elif self.config.save_method == "merged_4bit":
+                # Save merged model in 4-bit
+                self.model.save_pretrained_merged(save_path, self.tokenizer, save_method="merged_4bit")
+                logger.info(f"Merged 4-bit model saved to {save_path}")
+        else:
+            # Fallback to standard transformers save
             self.model.save_pretrained(save_path)
             self.tokenizer.save_pretrained(save_path)
-            logger.info(f"LoRA adapters saved to {save_path}")
-            
-        elif self.config.save_method == "merged_16bit":
-            # Save merged model in 16-bit
-            self.model.save_pretrained_merged(save_path, self.tokenizer, save_method="merged_16bit")
-            logger.info(f"Merged 16-bit model saved to {save_path}")
-            
-        elif self.config.save_method == "merged_4bit":
-            # Save merged model in 4-bit
-            self.model.save_pretrained_merged(save_path, self.tokenizer, save_method="merged_4bit")
-            logger.info(f"Merged 4-bit model saved to {save_path}")
+            logger.info(f"Model saved to {save_path} (standard transformers method)")
     
     def push_to_hub(self):
         """Push the model to Hugging Face Hub"""
@@ -196,29 +226,27 @@ class UnslothTrainer:
             logger.info("Push to hub is disabled in config")
             return
         
-        if not self.config.hf_token:
-            logger.warning("Hugging Face token not provided. Cannot push to hub.")
-            return
-        
-        try:
-            if self.config.save_method == "lora":
+        if UNSLOTH_AVAILABLE and hasattr(self.model, 'push_to_hub_merged'):
+            if self.config.save_method == "merged_16bit":
                 self.model.push_to_hub_merged(
-                    self.config.new_model_name,
+                    self.config.model_name,
                     self.tokenizer,
-                    save_method="lora",
+                    save_method="merged_16bit",
                     token=self.config.hf_token
                 )
             else:
                 self.model.push_to_hub_merged(
-                    self.config.new_model_name,
+                    self.config.model_name,
                     self.tokenizer,
-                    save_method=self.config.save_method,
+                    save_method="merged_4bit",
                     token=self.config.hf_token
                 )
-            logger.info(f"Model pushed to hub: {self.config.new_model_name}")
-        except Exception as e:
-            logger.error(f"Error pushing to hub: {str(e)}")
-            raise
+        else:
+            # Fallback to standard transformers push
+            self.model.push_to_hub(self.config.model_name, token=self.config.hf_token)
+            self.tokenizer.push_to_hub(self.config.model_name, token=self.config.hf_token)
+            
+        logger.info("Model pushed to Hugging Face Hub")
     
     def evaluate_model(self, test_texts, max_new_tokens=256):
         """

@@ -18,22 +18,12 @@ git clone https://github.com/mubinui/custom-training-unsloth.git
 cd custom-training-unsloth
 ```
 
-2. **Run automated setup:**
+2. **Run setup (handles everything):**
 ```cmd
 setup.bat
 ```
 
-3. **If Unsloth installation failed, install manually:**
-```cmd
-install_unsloth.bat
-```
-
-4. **For RTX 5080, upgrade PyTorch to CUDA 12.4:**
-```cmd
-upgrade_rtx5080.bat
-```
-
-5. **Activate environment manually if needed:**
+3. **Activate environment for future use:**
 ```cmd
 venv\Scripts\activate.bat
 ```
@@ -111,20 +101,16 @@ GPU_MEMORY_FRACTION=0.8
 
 ### Troubleshooting
 
-**Issue: "No module named 'unsloth'"**
-```cmd
-install_unsloth.bat
-```
+**Issue: "No module named 'unsloth'" or triton errors**
+This is normal on Windows. The system will use fallback methods.
+
+**Issue: "CUDA capability sm_120 is not compatible"**
+This warning is normal with CUDA 12.1. Training will still work but may be slower.
 
 **Issue: "No module named 'transformers'"**
 ```cmd
 venv\Scripts\activate.bat
 pip install transformers datasets accelerate
-```
-
-**Issue: "CUDA capability sm_120 is not compatible"**
-```cmd
-upgrade_rtx5080.bat
 ```
 
 **Issue: "bitsandbytes not found"**

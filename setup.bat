@@ -1,11 +1,7 @@
 @echo off
-echo Setting up Unsloth Custom Training Environment...
-
-REM Check CUDA availability
-python -c "import torch; print('CUDA Available:', torch.cuda.is_available())" 2>nul
-if %errorlevel% neq 0 (
-    echo Python or PyTorch not found, proceeding with installation...
-)
+echo ================================================
+echo Bengali Training Setup for Windows RTX 5080
+echo ================================================
 
 echo Creating virtual environment...
 python -m venv venv
@@ -21,7 +17,7 @@ call venv\Scripts\activate.bat
 echo Upgrading pip...
 python -m pip install --upgrade pip
 
-echo Installing PyTorch with RTX 5080 support (CUDA 12.4)...
+echo Installing PyTorch for RTX 5080 (CUDA 12.4)...
 pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
 
 if %errorlevel% neq 0 (
@@ -31,41 +27,34 @@ if %errorlevel% neq 0 (
     if %errorlevel% neq 0 (
         echo CUDA 12.4 failed, falling back to CUDA 12.1...
         pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+        echo WARNING: Using CUDA 12.1 - RTX 5080 may have compatibility warnings
     )
 )
 
-echo Installing requirements...
-pip install -r requirements.txt
+echo Installing core ML libraries...
+pip install transformers datasets accelerate peft trl python-dotenv
+pip install pandas numpy tqdm colorama rich safetensors protobuf packaging
+pip install "bitsandbytes>=0.45.5"
 
-echo Installing Unsloth...
-pip install git+https://github.com/unslothai/unsloth.git
+echo Installing Windows-compatible Unsloth...
+pip install --no-deps git+https://github.com/unslothai/unsloth.git
 
-if %errorlevel% neq 0 (
-    echo Requirements installation failed, trying individual packages...
-    pip install transformers datasets accelerate peft trl python-dotenv
-    pip install pandas numpy tqdm colorama rich safetensors protobuf packaging
-    pip install "bitsandbytes>=0.45.5"
-    echo Retrying Unsloth installation...
-    pip install git+https://github.com/unslothai/unsloth.git
-)
+echo Testing PyTorch and CUDA...
+python -c "import torch; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available())"
 
-echo Testing installation...
-python -c "import torch; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available()); print('CUDA version:', torch.version.cuda if torch.cuda.is_available() else 'None')"
+echo Creating environment configuration...
+python main_bengali.py --create-env
 
-echo Testing Unsloth...
-python -c "import unsloth; print('Unsloth imported successfully')"
-
+echo ================================================
+echo Setup Complete!
+echo ================================================
 echo.
-echo Setup complete! 
-echo.
-echo To activate the environment in future sessions, run:
+echo To start training:
 echo   venv\Scripts\activate.bat
-echo.
-echo To start training with sample data:
 echo   python main_bengali.py --sample --eval
 echo.
-echo To start training with your data:
-echo   python main_bengali.py --eval
+echo NOTE: RTX 5080 warnings are normal with CUDA 12.1
+echo For full RTX 5080 support, PyTorch nightly builds are recommended
 echo.
 pause
 echo.
