@@ -28,38 +28,24 @@ setup.bat
 clean_setup.bat
 ```
 
-4. **Activate environment for future use:**
+4. **Activate environment for training:**
 ```cmd
-venv\Scripts\activate.bat
-```
-
-### Manual Setup (if automated setup fails)
-
-1. **Create virtual environment:**
-```cmd
-python -m venv venv
-venv\Scripts\activate.bat
-python -m pip install --upgrade pip
-```
-
-2. **Install PyTorch for RTX 5080:**
-```cmd
-pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
-```
-
-3. **Install other dependencies:**
-```cmd
-pip install transformers datasets accelerate peft trl python-dotenv
-pip install pandas numpy tqdm colorama rich safetensors protobuf packaging
-pip install "bitsandbytes>=0.45.5"
-```
-
-4. **Install Unsloth:**
-```cmd
-pip install git+https://github.com/unslothai/unsloth.git
+activate.bat
 ```
 
 ### Training Commands
+
+**Easy activation and training:**
+```cmd
+activate.bat
+python main_bengali.py --sample --eval
+```
+
+**Or manually activate first:**
+```cmd
+venv\Scripts\activate.bat
+python main_bengali.py --sample --eval
+```
 
 **Test with sample data:**
 ```cmd
