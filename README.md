@@ -23,7 +23,17 @@ cd custom-training-unsloth
 setup.bat
 ```
 
-3. **Activate environment manually if needed:**
+3. **If Unsloth installation failed, install manually:**
+```cmd
+install_unsloth.bat
+```
+
+4. **For RTX 5080, upgrade PyTorch to CUDA 12.4:**
+```cmd
+upgrade_rtx5080.bat
+```
+
+5. **Activate environment manually if needed:**
 ```cmd
 venv\Scripts\activate.bat
 ```
@@ -101,6 +111,11 @@ GPU_MEMORY_FRACTION=0.8
 
 ### Troubleshooting
 
+**Issue: "No module named 'unsloth'"**
+```cmd
+install_unsloth.bat
+```
+
 **Issue: "No module named 'transformers'"**
 ```cmd
 venv\Scripts\activate.bat
@@ -109,7 +124,7 @@ pip install transformers datasets accelerate
 
 **Issue: "CUDA capability sm_120 is not compatible"**
 ```cmd
-pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu124
+upgrade_rtx5080.bat
 ```
 
 **Issue: "bitsandbytes not found"**

@@ -37,18 +37,22 @@ if %errorlevel% neq 0 (
 echo Installing requirements...
 pip install -r requirements.txt
 
+echo Installing Unsloth...
+pip install git+https://github.com/unslothai/unsloth.git
+
 if %errorlevel% neq 0 (
     echo Requirements installation failed, trying individual packages...
     pip install transformers datasets accelerate peft trl python-dotenv
     pip install pandas numpy tqdm colorama rich safetensors protobuf packaging
     pip install "bitsandbytes>=0.45.5"
+    echo Retrying Unsloth installation...
     pip install git+https://github.com/unslothai/unsloth.git
 )
 
 echo Testing installation...
 python -c "import torch; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available()); print('CUDA version:', torch.version.cuda if torch.cuda.is_available() else 'None')"
 
-python -c "try: import unsloth; print('Unsloth imported successfully'); except ImportError as e: print('Unsloth import failed:', e)"
+python -c "try:\n    import unsloth\n    print('Unsloth imported successfully')\nexcept ImportError as e:\n    print('Unsloth import failed:', e)"
 
 echo.
 echo Setup complete! 
